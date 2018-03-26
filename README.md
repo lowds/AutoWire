@@ -42,5 +42,5 @@ OK, so it doesn't look much when one class is used, but when your project grows 
 ## Can I mix AutoWire with standard registration?
 Yes you can, AutoWire will find classes that have the AutoService attribute applied, and you can continue to register any other types that do not have this attribute just as you do now
 
-## Do you have full documentation/
+## Do you have full documentation?
 Not yet, but I will do - soon
