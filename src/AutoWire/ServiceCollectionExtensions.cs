@@ -1,6 +1,4 @@
-﻿// Copyright (c) 2018 DoctorLink. All rights reserved.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,8 +6,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoWire
 {
+    /// <summary>
+    /// Extension methods for registration of classes using the <see cref="AutoServiceAttribute"/>
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Scan all assemblies within the current <see cref="AppDomain"/> for any classes that have the <see cref="AutoServiceAttribute"/>
+        /// applied and register them within the provided <paramref name="serviceCollection"/>
+        /// </summary>
+        /// <param name="serviceCollection">A service collection within which types should be registered</param>
+        /// <returns>The <paramref name="serviceCollection"/> originally provided to this method</returns>
         public static IServiceCollection AutoWire(this IServiceCollection serviceCollection)
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -21,6 +28,13 @@ namespace AutoWire
             return serviceCollection;
         }
 
+        /// <summary>
+        /// Scan all assemblies within the provided <see cref="Assembly"/> for any classes that have the <see cref="AutoServiceAttribute"/>
+        /// applied and register them within the provided <paramref name="serviceCollection"/>
+        /// </summary>
+        /// <param name="serviceCollection">A service collection within which types should be registered</param>
+        /// <param name="assembly">An assembly to search for classes with the <see cref="AutoServiceAttribute"/> applied</param>
+        /// <returns>The <paramref name="serviceCollection"/> originally provided to this method</returns>
         public static IServiceCollection AutoWire(this IServiceCollection serviceCollection, Assembly assembly)
         {
             var typesImplementingServiceAttribute = ScanForTypes(assembly);
@@ -60,6 +74,7 @@ namespace AutoWire
         private static IEnumerable<(Type, AutoServiceAttribute)> ScanForTypes(Assembly assembly)
         {
             return from type in assembly.GetTypes()
+                where type.IsClass
                 let attr = type.GetCustomAttribute<AutoServiceAttribute>()
                 where attr != null
                 select (type, attr);
